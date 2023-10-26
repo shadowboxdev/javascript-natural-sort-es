@@ -1,27 +1,30 @@
 {
-  "name": "javascript-natural-sort",
-  "version": "0.7.1",
-  "description": "Natural Sort algorithm for Javascript - Version 0.7 - Released under MIT license",
-  "main": "naturalSort.js",
+  "name": "javascript-natural-sort-es",
+  "version": "1.0.0",
+  "description": "Natural Sort algorithm for Javascript",
+  "license": "MIT",
+  "author": "ShadowboxDev (based on javascript-natural-sort by Jim Palmer)",
+  "bugs": {
+    "url": "https://github.com/shadowboxdev/javascript-natural-sort-es/issues"
+  },
+  "homepage": "https://github.com/shadowboxdev/javascript-natural-sort-es",
+  "main": "natural-sort.js",
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bill4Time/javascript-natural-sort.git"
+    "url": "https://github.com/shadowboxdev/javascript-natural-sort-es.git"
   },
   "keywords": [
     "natural",
     "sort",
     "javascript",
+    "typescript",
     "array",
     "sort",
-    "sorting"
-  ],
-  "author": "Jim Palmer (based on chunking idea from Dave Koelle, packaged by @khous of Bill4Time)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Bill4Time/javascript-natural-sort/issues"
-  },
-  "homepage": "https://github.com/Bill4Time/javascript-natural-sort"
+    "sorting",
+    "javascript-natural-sort"
+  ]
 }
