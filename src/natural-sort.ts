@@ -1,7 +1,7 @@
 
 
 import { REGEXP, STRING_REGEXP, DATE_REGEXP, HEX_REGEXP, LEADING_ZERO_REGEXP } from './expressions'
-import { _match, _lt, _gt, _max, _isNaN, _isTypeMatch, _parseIntFromHexValue, _parseDate } from './lib';
+import { _match, _lt, _gt, _max, _isNaN, _isTypeMatch, _parseIntFromHexValue, _parseDate, _hasLength, _equals } from './lib';
 
 import { SortResult } from './types';
 
@@ -66,7 +66,7 @@ export class NaturalSort {
     }
 
     private _checkForAlternateTypes(x: string, y: string, xN: string[], yN: string[]): Record<'xD' | 'yD', number | false | null> {
-        const xD = _parseIntFromHexValue(_matchHex(x)) || (xN.length !== 1 && _matchDate(x) && _parseDate(x));
+        const xD = _parseIntFromHexValue(_matchHex(x)) || (!_equals(1, _hasLength(1, xN)) && _matchDate(x) && _parseDate(x));
         const yD = _parseIntFromHexValue(_matchHex(y)) || xD && _matchDate(y) && _parseDate(y) || null;
 
         return { xD, yD };

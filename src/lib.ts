@@ -12,7 +12,6 @@ export function curry<FN extends (...args: any[]) => any, STARTING_ARGS extends 
     }
 }
 
-
 export function _isNaN(value: unknown): boolean {
     return isNaN(value as number);
 }
@@ -54,3 +53,7 @@ export function _gt(a: unknown, b: unknown): boolean {
 export function _max(a: number, b: number): number {
     return Math.max(a, b);
 }
+
+export const _hasLength = curry((length: number, value: unknown[]): boolean => {
+    return value && value.length === length;
+});
