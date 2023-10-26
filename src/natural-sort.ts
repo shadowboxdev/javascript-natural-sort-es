@@ -24,7 +24,6 @@ export class NaturalSort {
         let oFxNcL: number | string | null = null;
         let oFyNcL: number | string | null = null;
 
-
         // first try and sort Hex codes or Dates
         if (yD) {
             if (_lt(xD, yD)) return -1;
