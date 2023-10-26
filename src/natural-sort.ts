@@ -1,120 +1,17 @@
 
 
-type PartialParameters<FN extends (...args: any[]) => any> = PartialTuple<Parameters<FN>>;
+import { REGEXP, STRING_REGEXP, DATE_REGEXP, HEX_REGEXP, LEADING_ZERO_REGEXP } from './expressions'
+import { _match, _lt, _gt, _max, _isNaN, _isTypeMatch, _parseIntFromHexValue, _parseDate } from './lib';
 
-type RemainingParameters<
-    PROVIDED extends any[],
-    EXPECTED extends any[]
-> =
-    // if the expected array has any required items…
-    EXPECTED extends [infer E1, ...infer EX] ?
-    // if the provided array has at least one required item,
-    // recurse with one item less in each array type
-    PROVIDED extends [infer P1, ...infer PX] ?
-    RemainingParameters<PX, EX> :
-    // else the remaining args is unchanged
-    EXPECTED :
-    // else there are no more arguments
-    [];
+import { SortResult } from './types';
 
-type PartialTuple<
-    TUPLE extends any[],
-    EXTRACTED extends any[] = []
-> =
-    // If the tuple provided has at least one required value
-    TUPLE extends [infer NEXT_PARAM, ...infer REMAINING] ?
-    // recurse back in to this type with one less item 
-    // in the original tuple, and the latest extracted value
-    // added to the extracted list as optional
-    PartialTuple<REMAINING, [...EXTRACTED, NEXT_PARAM?]> :
-    // else if there are no more values, 
-    // return an empty tuple so that too is a valid option
-    [...EXTRACTED, ...TUPLE];
-
-type CurriedFunction<
-    PROVIDED extends any[],
-    FN extends (...args: any[]) => any
-> =
-    <NEW_ARGS extends PartialTuple<
-        RemainingParameters<PROVIDED, Parameters<FN>>
-    >>(...args: NEW_ARGS) =>
-        CurriedFunctionOrReturnValue<[...PROVIDED, ...NEW_ARGS], FN>
-
-type CurriedFunctionOrReturnValue<
-    PROVIDED extends any[],
-    FN extends (...args: any[]) => any
-> = RemainingParameters<PROVIDED, Parameters<FN>> extends [any, ...any[]] ? CurriedFunction<PROVIDED, FN> : ReturnType<FN>
-
-
-
-function curry<FN extends (...args: any[]) => any, STARTING_ARGS extends PartialParameters<FN>>(
-    targetFn: FN, ...existingArgs: STARTING_ARGS
-): CurriedFunction<STARTING_ARGS, FN> {
-    return function (...args: any[]) {
-        const totalArgs = [...existingArgs, ...args]
-        if (totalArgs.length >= targetFn.length) {
-            return targetFn(...totalArgs)
-        }
-        return curry(targetFn, ...totalArgs as PartialParameters<FN>)
-    }
-}
-
-type SortResult = 0 | 1 | -1;
-
-const REGEXP = new RegExp(/(^([+\-]?(?:0|[1-9]\d*)(?:\.\d*)?(?:[eE][+\-]?\d+)?)?$|^0x[0-9a-f]+$|\d+)/, 'gi');
-const STRING_REGEXP = new RegExp(/(^[ ]*|[ ]*$)/, 'g');
-const DATE_REGEXP = new RegExp(/(^([\w ]+,?[\w ]+)?[\w ]+,?[\w ]+\d+:\d+(:\d+)?[\w ]?|^\d{1,4}[\/\-]\d{1,4}[\/\-]\d{1,4}|^\w+, \w+ \d+, \d{4})/);
-const HEX_REGEXP = new RegExp(/^0x[0-9a-f]+$/, 'i');
-const LEADING_ZERO_REGEXP = new RegExp(/^0/);
-
-function _isNaN(value: unknown): boolean {
-    return isNaN(value as number);
-}
-
-function _parseIntFromHexValue(value: unknown): number {
-    return parseInt(value as string, 16);
-}
-
-function _parseDate(value: unknown): number {
-    return Date.parse(value as string);
-}
-
-const _match = curry((expression: RegExp, value: string): RegExpMatchArray | null => {
-    return value.match(expression);
-});
-
-const _replace = curry((expression: RegExp, replaceValue: string, value: string): string => value.replace(expression, replaceValue));
-
-function _typeOf(value: unknown): string {
-    return typeof value;
-}
-
-function _equals(a: unknown, b: unknown): boolean {
-    return a === b;
-}
-
-function _isTypeMatch(a: unknown, b: unknown): boolean {
-    return _equals(_typeOf(a), _typeOf(b));
-}
-
-function _lt(a: unknown, b: unknown): boolean {
-    return (a as string) < (b as string);
-}
-
-function _gt(a: unknown, b: unknown): boolean {
-   return (a as string) > (b as string);
-}
-
-function _max(a: number, b: number): number {
-    return Math.max(a, b);
-}
 
 const _matchHex = _match(HEX_REGEXP);
 const _matchDate = _match(DATE_REGEXP);
 const _startsWithZero = _match(LEADING_ZERO_REGEXP);
 
-class NaturalSort {
-    public insensitive: boolean = true;
+export class NaturalSort {
+    constructor(public insensitive: boolean = true) {}
 
     public sort(a: unknown, b: unknown): SortResult {
         // convert all to strings strip whitespace
@@ -183,7 +80,3 @@ class NaturalSort {
         return { xN, yN };
     }
 }
-
-export function naturalSort<T>(a: T, b: T) {
-    return new NaturalSort().sort(a, b);
-};
